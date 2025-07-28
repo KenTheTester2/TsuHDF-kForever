@@ -173,13 +173,16 @@ def ooc_cmd_status(client, arg):
             raise ClientError("You may not do that while spectating!")
         try:
             client.area.change_status(arg)
-            client.area.broadcast_ooc(
-                "{} changed status to {}.".format(
-                    client.showname, client.area.status)
-            )
-            database.log_area("status", client, client.area, message=arg)
-        except AreaError:
-            raise
+                if arg != "idle" and arg != "rp" and arg != "casing" and arg != "looking-for-players" and arg!= "lfp" and arg != "recess" and arg!= "gaming":
+                    raise ClientError("Invalid status. Please select from - idle, rp, casing, looking-for-players, lfp, recess, or gaming.")
+                else:
+                    client.area.broadcast_ooc(
+                        "{} changed status to {}.".format(
+                            client.showname, client.area.status)
+                    )
+                    database.log_area("status", client, client.area, message=arg)
+                except AreaError:
+                    raise
 
 
 def ooc_cmd_area(client, arg):
