@@ -1,7 +1,7 @@
-import json
 import sys
 import logging
 import traceback
+import json
 
 import asyncio
 import aiohttp
@@ -83,38 +83,32 @@ class MasterServerClient:
             None
         """
         cfg = self.server.config
-        body = {}
 
-        if cfg['advertise_port']:
-            body = {
-                'ip': await asyncio.get_event_loop().run_in_executor(None, self.get_my_ip),
-                'port': cfg['advertising_port'],
-                'name': cfg['masterserver_name'],
-                'description': cfg['masterserver_description'],
-                'players': self.server.player_count
-            }
+        # Try to get the custom hostname
+        f_ip = cfg.get('masterserver_custom_hostname')
 
-        else:
-            body = {
-                'ip': await loop.run_in_executor(None, self.get_my_ip),
-                'port': cfg['port'],
-                'name': cfg['masterserver_name'],
-                'description': cfg['masterserver_description'],
-                'players': self.server.player_count
-            }
+        # If fails, try to get the external IP
+        if not f_ip:
+            loop = asyncio.get_event_loop()
+            f_ip = await loop.run_in_executor(None, self.get_my_ip)
+
+        body = {
+            'ip': f_ip,
+            'port': cfg['port'],
+            'name': cfg['masterserver_name'],
+            'description': cfg['masterserver_description'],
+            'players': self.server.player_count
+        }
 
         if cfg['use_websockets']:
-            if cfg['advertise_port']:
-                body['ws_port'] = cfg['ad_websocket_port']
-            else:
-                body['ws_port'] = cfg['websocket_port']
+            body['ws_port'] = cfg['websocket_port']
 
         if 'use_securewebsockets' in cfg and cfg['use_securewebsockets']:
             if 'secure_websocket_port' in cfg:
                 body['wss_port'] = cfg['secure_websocket_port']
 
         json_body = json.dumps(body)
-        logging.info('Advertising %s to %s/servers', json_body, API_BASE_URL)
+        logger.debug('Advertising %s to %s/servers', json_body, API_BASE_URL)
 
         async with http.post(f'{API_BASE_URL}/servers', json=body) as res:
             err_body = await res.text()
