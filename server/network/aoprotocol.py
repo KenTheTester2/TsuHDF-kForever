@@ -145,7 +145,7 @@ class AOProtocol(asyncio.Protocol):
 
         """
         if self.client is not None:
-            logger.debug("%s disconnected.", self.client.ipid)
+            logger.debug(f"{self.client.ipid} disconnected: {exc}")
             self.server.remove_client(self.client)
         if self.ping_timeout is not None:
             self.ping_timeout.cancel()
