@@ -113,7 +113,7 @@ def ooc_cmd_about(client, _):
     """
     Info about the server
     """
-    client.send_ooc("Welcome to AO running on TsuserverValley 1.0 - Anti Raid Update. please visit our github at (insert link here) to learn more. Software maintained by Penix and Witch Athena.")
+    client.send_ooc("Welcome to AO running on TsuserverValley 0.8 Beta - ValleyID Test update. please visit our github at (insert link here) to learn more. Software maintained by Penix, Witch Athena, Ec, and more..")
 
 @mod_only()
 def ooc_cmd_kick(client, arg):
