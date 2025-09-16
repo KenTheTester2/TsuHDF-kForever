@@ -8,8 +8,8 @@ class RaidManager:
         self.server = server
         self.current_level = 0
         self.raid_config = self.load_config()
-        self.connection_counts = defaultdict(lambda: {'connections': [], 'times': []})
-        self.global_connections = {'connections': [], 'times': []}
+       # self.connection_counts = defaultdict(lambda: {'connections': [], 'times': []})
+       # self.global_connections = {'connections': [], 'times': []}
         self.client_warnings = defaultdict(int)
         self.modcall_times = defaultdict(list)
         self.last_modcall_time = defaultdict(float)
@@ -140,56 +140,56 @@ class RaidManager:
         """Get current level configuration"""
         return self.raid_config['levels'].get(str(self.current_level), {})
 
-    def can_connect(self, hdid):
-        """Check if client can connect based on connection limits"""
-        if self.current_level == 0:
-            return True
+    # def can_connect(self, hdid):
+       # """Check if client can connect based on connection limits"""
+       # if self.current_level == 0:
+           # return True
                 
-        config = self.get_current_config()
-        if not config.get('enabled', False):
-            return True
+       # config = self.get_current_config()
+       # if not config.get('enabled', False):
+           # return True
 
-        if hdid in self.whitelisted_hdids:
-            return True
+       # if hdid in self.whitelisted_hdids:
+           # return True
                 
-        limit_config = config.get('limit_connections', {})
-        if isinstance(limit_config, dict):
-            current_time = time.time()
-            limit = limit_config.get('amount', 0)
-            duration = self.parse_time(limit_config.get('duration', '0s'))
+        # limit_config = config.get('limit_connections', {})
+        # if isinstance(limit_config, dict):
+            # current_time = time.time()
+        #  limit = limit_config.get('amount', 0)
+        #  duration = self.parse_time(limit_config.get('duration', '0s'))
             
-            cutoff = current_time - duration
-            self.global_connections['times'] = [t for t in self.global_connections['times'] 
-                                              if t > cutoff]
+           #  cutoff = current_time - duration
+        # self.global_connections['times'] = [t for t in self.global_connections['times'] 
+                                             # if t > cutoff]
 
-            if len(self.global_connections['times']) >= limit:
-                print(f"Connection rejected: {len(self.global_connections['times'])} connections in last {duration}s")
-                return False
+           # if len(self.global_connections['times']) >= limit:
+               # print(f"Connection rejected: {len(self.global_connections['times'])} connections in last {duration}s")
+               # return False
                 
-        return True
+       # return True
         
-    def record_connection(self, hdid):
-        """Record a connection attempt"""
-        if not self.current_level:
-            return
+   # def record_connection(self, hdid):
+       # """Record a connection attempt"""
+       # if not self.current_level:
+           # return
                 
-        config = self.get_current_config()
-        if not config.get('enabled', False):
-            return
+       # config = self.get_current_config()
+       # if not config.get('enabled', False):
+           # return
                     
-        limit_config = config.get('limit_connections', {})
-        if isinstance(limit_config, dict):
-            current_time = time.time()
-            limit = limit_config.get('amount', 0)
-            duration = self.parse_time(limit_config.get('duration', '0s'))
+       # limit_config = config.get('limit_connections', {})
+       # if isinstance(limit_config, dict):
+           # current_time = time.time()
+           # limit = limit_config.get('amount', 0)
+           # duration = self.parse_time(limit_config.get('duration', '0s'))
 
-            cutoff = current_time - duration
-            self.global_connections['times'] = [t for t in self.global_connections['times'] 
-                                              if t > cutoff]
+           # cutoff = current_time - duration
+           # self.global_connections['times'] = [t for t in self.global_connections['times'] 
+                                             # if t > cutoff]
 
-            if len(self.global_connections['times']) < limit:
-                self.global_connections['times'].append(current_time)
-                print(f"Connection recorded. Total connections: {len(self.global_connections['times'])}")
+           # if len(self.global_connections['times']) < limit:
+               # self.global_connections['times'].append(current_time)
+               # print(f"Connection recorded. Total connections: {len(self.global_connections['times'])}")
 
     def can_send_packet(self, client):
         """Check if client can send packets based on delay setting"""
